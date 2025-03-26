@@ -14,15 +14,15 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Install dependencies
+    - name: Install dependencies (Flex, Bison, libfl)
       run: |
         sudo apt-get update
-        sudo apt-get install -y flex bison g++  # g++ for .cpp
+        sudo apt-get install -y flex bison g++ libfl-dev
 
     - name: Compile lexer and parser
       run: |
-        bison -d limbaj.y                # generates limbaj.tab.c and limbaj.tab.h
-        flex -o lex.yy.c limbaj.l        # generates lex.yy.c
+        bison -d limbaj.y
+        flex -o lex.yy.c limbaj.l
 
     - name: Build final executable
       run: |
