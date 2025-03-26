@@ -1,0 +1,38 @@
+name: Build Original Language
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y flex bison g++  # g++ for .cpp
+
+    - name: Compile lexer and parser
+      run: |
+        bison -d limbaj.y                # generates limbaj.tab.c and limbaj.tab.h
+        flex -o lex.yy.c limbaj.l        # generates lex.yy.c
+
+    - name: Build final executable
+      run: |
+        g++ -o language limbaj.tab.c lex.yy.c SymTable.cpp -lfl
+
+    - name: Run sample test (optional)
+      run: |
+        echo 'Running language with test input (if exists)...'
+        if [ -f test.input ]; then
+          ./language < test.input
+        else
+          echo "No test.input file found"
+        fi
